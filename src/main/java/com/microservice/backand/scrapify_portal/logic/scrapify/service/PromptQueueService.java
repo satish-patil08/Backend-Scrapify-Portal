@@ -1,6 +1,7 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.service;
 
 import com.microservice.backand.scrapify_portal.modelRequest.ScrapifyJobs;
+import com.microservice.backand.scrapify_portal.modelResponse.ScrapifyJobStatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -59,15 +60,14 @@ public class PromptQueueService {
         return result;
     }
 
-    public StatusResponse getNextJob() {
+    public ScrapifyJobStatusResponse getNextJob() {
         ScrapifyJobs job = jobQueue.poll();
         if (job == null)
-            return new StatusResponse(
+            return new ScrapifyJobStatusResponse(
                     false,
-                    "The Job Queue is Empty",
-                    null
+                    "The Job Queue is Empty"
             );
-        return new StatusResponse(
+        return new ScrapifyJobStatusResponse(
                 true,
                 "Job Retrieved Successfully",
                 job
