@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -20,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Service
 public class PromptQueueService {
 
-    private Queue<ScrapifyJobs> jobQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<ScrapifyJobs> jobQueue = new ConcurrentLinkedQueue<>();
 
     public ResponseEntity<Object> processCsv(MultipartFile file, String basePrompt, String urlTemplate, Long category) throws IOException, CsvValidationException {
 
@@ -34,13 +33,14 @@ public class PromptQueueService {
                 for (int i = 0; i < headers.length; i++) {
                     recordMap.put(headers[i], row[i]);
                 }
-                System.out.println(Arrays.toString(row));
 
                 String finalPrompt = replaceVariables(basePrompt, recordMap);
                 String finalUrl = replaceVariables(urlTemplate, recordMap);
-                ScrapifyJobs job = new ScrapifyJobs(finalPrompt, category, finalUrl);
-                jobQueue.add(job);
-
+                jobQueue.add(new ScrapifyJobs(
+                        finalPrompt,
+                        category,
+                        finalUrl
+                ));
             }
             System.out.println("GENERATED_PROMPTS----->" + jobQueue);
         }
@@ -59,8 +59,19 @@ public class PromptQueueService {
         return result;
     }
 
-    public ScrapifyJobs getNextJob() {
-        return jobQueue.poll();
+    public StatusResponse getNextJob() {
+        ScrapifyJobs job = jobQueue.poll();
+        if (job == null)
+            return new StatusResponse(
+                    false,
+                    "The Job Queue is Empty",
+                    null
+            );
+        return new StatusResponse(
+                true,
+                "Job Retrieved Successfully",
+                job
+        );
     }
 
 }

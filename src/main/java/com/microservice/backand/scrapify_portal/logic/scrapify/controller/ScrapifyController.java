@@ -3,6 +3,7 @@ package com.microservice.backand.scrapify_portal.logic.scrapify.controller;
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.PromptQueueService;
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.ScrapifyService;
 import com.microservice.backand.scrapify_portal.modelRequest.ScrapifyJobs;
+import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,12 +33,7 @@ public class ScrapifyController {
     }
 
     @GetMapping("/next-job")
-    public ResponseEntity<Object> getNextJob() {
-        ScrapifyJobs job = promptQueueService.getNextJob();
-        if (job != null) {
-            return ResponseEntity.ok(job);
-        } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No job available.");
-        }
+    public StatusResponse getNextJob() {
+        return promptQueueService.getNextJob();
     }
 }

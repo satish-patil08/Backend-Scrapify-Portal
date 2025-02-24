@@ -26,7 +26,7 @@ public class SecurityConfig {
                         auth.requestMatchers(
                                         "/users/login",
                                         "/users/register",
-                                        "/scrapify/upload-csv"
+                                        "/scrapify/**"
                                 ).permitAll() // Allow public access to auth endpoints
                                 .anyRequest().authenticated())// Secure all other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
