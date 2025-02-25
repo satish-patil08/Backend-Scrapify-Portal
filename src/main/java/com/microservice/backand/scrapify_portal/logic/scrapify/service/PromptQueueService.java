@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -32,7 +34,7 @@ public class PromptQueueService {
             while ((row = csvReader.readNext()) != null) {
                 Map<String, String> recordMap = new HashMap<>();
                 for (int i = 0; i < headers.length; i++) {
-                    recordMap.put(headers[i], row[i]);
+                    recordMap.put(headers[i].strip(), row[i].strip());
                 }
 
                 String finalPrompt = replaceVariables(basePrompt, recordMap);
@@ -40,7 +42,7 @@ public class PromptQueueService {
                 jobQueue.add(new ScrapifyJobs(
                         finalPrompt,
                         category,
-                        finalUrl
+                        URLEncoder.encode(finalUrl, StandardCharsets.UTF_8)
                 ));
             }
             System.out.println("GENERATED_PROMPTS----->" + jobQueue);
@@ -54,7 +56,7 @@ public class PromptQueueService {
     private String replaceVariables(String template, Map<String, String> record) {
         String result = template;
         for (Map.Entry<String, String> entry : record.entrySet()) {
-            String placeholder = "__" + entry.getKey() + "__";
+            String placeholder = "{" + entry.getKey() + "}";
             result = result.replace(placeholder, entry.getValue());
         }
         return result;
