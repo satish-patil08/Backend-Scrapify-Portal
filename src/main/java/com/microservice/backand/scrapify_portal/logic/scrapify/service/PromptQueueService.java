@@ -14,9 +14,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
@@ -62,9 +60,9 @@ public class PromptQueueService {
         return result;
     }
 
-    public ScrapifyJobStatusResponse getNextJob() {
-        ScrapifyJobs job = jobQueue.poll();
-        if (job == null)
+    public ScrapifyJobStatusResponse getJob() {
+        List<ScrapifyJobs> jobs = new ArrayList<>(jobQueue);
+        if (jobs.isEmpty())
             return new ScrapifyJobStatusResponse(
                     false,
                     "The Job Queue is Empty"
@@ -72,7 +70,7 @@ public class PromptQueueService {
         return new ScrapifyJobStatusResponse(
                 true,
                 "Job Retrieved Successfully",
-                job
+                jobs
         );
     }
 

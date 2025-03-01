@@ -30,8 +30,8 @@ public class ScrapifyController {
         return promptQueueService.processCsv(file, basePrompt, urlTemplate, category);
     }
 
-    @GetMapping("/next-job")
+    @GetMapping("/get-jobs")
     public ScrapifyJobStatusResponse getNextJob() {
-        return promptQueueService.getNextJob();
+        return promptQueueService.getJob();
     }
 }
