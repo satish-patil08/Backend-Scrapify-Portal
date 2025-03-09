@@ -38,7 +38,7 @@ public class PromptQueueService {
                 String finalPrompt = replaceVariables(basePrompt, recordMap);
                 String finalUrl = replaceVariables(urlTemplate, recordMap);
                 jobQueue.add(new ScrapifyJobs(
-                        finalPrompt,
+                        URLEncoder.encode(finalPrompt, StandardCharsets.UTF_8),
                         category,
                         URLEncoder.encode(finalUrl, StandardCharsets.UTF_8)
                 ));
