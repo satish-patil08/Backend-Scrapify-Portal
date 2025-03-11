@@ -3,15 +3,13 @@ package com.microservice.backand.scrapify_portal.modelRequest;
 public class ScrapifyJobs {
     public String finalPrompt;
     public Long category;
-    public String url;
 
     public ScrapifyJobs() {
     }
 
-    public ScrapifyJobs(String finalPrompt, Long category, String url) {
+    public ScrapifyJobs(String finalPrompt, Long category) {
         this.finalPrompt = finalPrompt;
         this.category = category;
-        this.url = url;
     }
 
     public String getFinalPrompt() {
@@ -30,20 +28,12 @@ public class ScrapifyJobs {
         this.category = category;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     @Override
     public String toString() {
         return "ScrapifyJobs{" +
                 "finalPrompt='" + finalPrompt + '\'' +
                 ", category=" + category +
-                ", url='" + url + '\'' +
                 '}';
     }
 }

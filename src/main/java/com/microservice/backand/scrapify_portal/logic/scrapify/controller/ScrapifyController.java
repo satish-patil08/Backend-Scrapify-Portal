@@ -23,11 +23,10 @@ public class ScrapifyController {
     @PostMapping(value = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> uploadCsv(
             @RequestParam("file") MultipartFile file,
-            @RequestParam String basePrompt,
-            @RequestParam String urlTemplate,
+            @RequestParam String prompt,
             @RequestParam Long category
     ) throws Exception {
-        return promptQueueService.processCsv(file, basePrompt, urlTemplate, category);
+        return promptQueueService.processCsv(file, prompt, category);
     }
 
     @GetMapping("/get-jobs")

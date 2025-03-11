@@ -22,7 +22,7 @@ public class PromptQueueService {
 
     private final Queue<ScrapifyJobs> jobQueue = new ConcurrentLinkedQueue<>();
 
-    public ResponseEntity<Object> processCsv(MultipartFile file, String basePrompt, String urlTemplate, Long category) throws IOException, CsvValidationException {
+    public ResponseEntity<Object> processCsv(MultipartFile file, String prompt, Long category) throws IOException, CsvValidationException {
 
         try (Reader reader = new InputStreamReader(file.getInputStream());
              CSVReader csvReader = new CSVReader(reader)) {
@@ -35,15 +35,11 @@ public class PromptQueueService {
                     recordMap.put(headers[i].strip(), row[i].strip());
                 }
 
-                String finalPrompt = replaceVariables(basePrompt, recordMap);
-                String finalUrl = replaceVariables(urlTemplate, recordMap);
                 jobQueue.add(new ScrapifyJobs(
-                        URLEncoder.encode(finalPrompt, StandardCharsets.UTF_8),
-                        category,
-                        URLEncoder.encode(finalUrl, StandardCharsets.UTF_8)
+                        URLEncoder.encode(replaceVariables(prompt, recordMap), StandardCharsets.UTF_8),
+                        category
                 ));
             }
-            System.out.println("GENERATED_PROMPTS----->" + jobQueue);
         }
         return ResponseEntity.ok(new StatusResponse(
                 true,
@@ -61,7 +57,12 @@ public class PromptQueueService {
     }
 
     public ScrapifyJobStatusResponse getJob() {
-        List<ScrapifyJobs> jobs = new ArrayList<>(jobQueue);
+        List<ScrapifyJobs> jobs = new ArrayList<>();
+
+        while (!jobQueue.isEmpty()) {
+            jobs.add(jobQueue.poll());
+        }
+
         if (jobs.isEmpty())
             return new ScrapifyJobStatusResponse(
                     false,
