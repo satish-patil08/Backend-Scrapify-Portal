@@ -2,7 +2,7 @@ package com.microservice.backand.scrapify_portal.modelRequest;
 
 import java.util.ArrayList;
 
-public class ChatGPTResponseData {
+public class ChatGPTResponseDTO {
     public String country_name;
     public String country_id;
     public String country_region;
@@ -18,10 +18,10 @@ public class ChatGPTResponseData {
     public String language_code;
     public ArrayList<String> domain_extensions;
 
-    public ChatGPTResponseData() {
+    public ChatGPTResponseDTO() {
     }
 
-    public ChatGPTResponseData(String country_name, String country_id, String country_region, String country_income_group, String country_income_class, String calling_code, int mobile_min_length, int mobile_max_length, String currency_code, String currency_symbol, String time_zone, String main_language, String language_code, ArrayList<String> domain_extensions) {
+    public ChatGPTResponseDTO(String country_name, String country_id, String country_region, String country_income_group, String country_income_class, String calling_code, int mobile_min_length, int mobile_max_length, String currency_code, String currency_symbol, String time_zone, String main_language, String language_code, ArrayList<String> domain_extensions) {
         this.country_name = country_name;
         this.country_id = country_id;
         this.country_region = country_region;

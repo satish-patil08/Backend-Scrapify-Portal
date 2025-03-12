@@ -1,4 +1,4 @@
-package com.microservice.backand.scrapify_portal.modelResponse;
+package com.microservice.backand.scrapify_portal.modelResponse.scrapify;
 
 import com.microservice.backand.scrapify_portal.modelRequest.ScrapifyJobs;
 

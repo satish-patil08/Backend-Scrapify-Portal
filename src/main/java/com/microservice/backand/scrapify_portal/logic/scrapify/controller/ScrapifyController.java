@@ -2,7 +2,7 @@ package com.microservice.backand.scrapify_portal.logic.scrapify.controller;
 
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.PromptQueueService;
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.ScrapifyService;
-import com.microservice.backand.scrapify_portal.modelResponse.ScrapifyJobStatusResponse;
+import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,4 +33,15 @@ public class ScrapifyController {
     public ScrapifyJobStatusResponse getNextJob() {
         return promptQueueService.getJob();
     }
+
+    @GetMapping("/get-content-data")
+    public ResponseEntity<Object> getContentList(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, defaultValue = "false") Boolean exportable,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        return scrapifyService.getContentListOrCSV(categoryId, exportable, page, size);
+    }
+
 }

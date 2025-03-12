@@ -1,7 +1,7 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.service;
 
 import com.microservice.backand.scrapify_portal.modelRequest.ScrapifyJobs;
-import com.microservice.backand.scrapify_portal.modelResponse.ScrapifyJobStatusResponse;
+import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;

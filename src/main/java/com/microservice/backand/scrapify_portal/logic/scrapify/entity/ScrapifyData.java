@@ -1,6 +1,6 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.entity;
 
-import com.microservice.backand.scrapify_portal.modelRequest.ChatGPTResponseData;
+import com.microservice.backand.scrapify_portal.modelRequest.ChatGPTResponseDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,12 +15,12 @@ public class ScrapifyData {
     public Long id;
     public String content; // Raw JSON response from ChatGPT
     public Long categoryId;
-    public ChatGPTResponseData jsonData; // Custom model to store structured data
+    public ChatGPTResponseDTO jsonData; // Custom model to store structured data
 
     public ScrapifyData() {
     }
 
-    public ScrapifyData(Long id, String content, Long categoryId, ChatGPTResponseData jsonData) {
+    public ScrapifyData(Long id, String content, Long categoryId, ChatGPTResponseDTO jsonData) {
         this.id = id;
         this.content = content;
         this.categoryId = categoryId;
@@ -51,11 +51,11 @@ public class ScrapifyData {
         this.categoryId = categoryId;
     }
 
-    public ChatGPTResponseData getJsonData() {
+    public ChatGPTResponseDTO getJsonData() {
         return jsonData;
     }
 
-    public void setJsonData(ChatGPTResponseData jsonData) {
+    public void setJsonData(ChatGPTResponseDTO jsonData) {
         this.jsonData = jsonData;
     }
 
