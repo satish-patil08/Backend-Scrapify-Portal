@@ -13,6 +13,7 @@ public class ScrapifyData {
 
     @Id
     public Long id;
+    public ScrappingModel model;
     public String content; // Raw JSON response from ChatGPT
     public Long categoryId;
     public ChatGPTResponseDTO jsonData; // Custom model to store structured data
@@ -20,8 +21,9 @@ public class ScrapifyData {
     public ScrapifyData() {
     }
 
-    public ScrapifyData(Long id, String content, Long categoryId, ChatGPTResponseDTO jsonData) {
+    public ScrapifyData(Long id, ScrappingModel model, String content, Long categoryId, ChatGPTResponseDTO jsonData) {
         this.id = id;
+        this.model = model;
         this.content = content;
         this.categoryId = categoryId;
         this.jsonData = jsonData;
@@ -33,6 +35,14 @@ public class ScrapifyData {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ScrappingModel getModel() {
+        return model;
+    }
+
+    public void setModel(ScrappingModel model) {
+        this.model = model;
     }
 
     public String getContent() {
@@ -63,6 +73,7 @@ public class ScrapifyData {
     public String toString() {
         return "ScrapifyData{" +
                 "id=" + id +
+                ", model=" + model +
                 ", content='" + content + '\'' +
                 ", categoryId=" + categoryId +
                 ", jsonData=" + jsonData +

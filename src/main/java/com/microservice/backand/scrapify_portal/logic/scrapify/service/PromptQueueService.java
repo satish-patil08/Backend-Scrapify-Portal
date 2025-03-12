@@ -1,5 +1,6 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.service;
 
+import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 import com.microservice.backand.scrapify_portal.modelRequest.ScrapifyJobs;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
@@ -22,7 +23,7 @@ public class PromptQueueService {
 
     private final Queue<ScrapifyJobs> jobQueue = new ConcurrentLinkedQueue<>();
 
-    public ResponseEntity<Object> processCsv(MultipartFile file, String prompt, Long category) throws IOException, CsvValidationException {
+    public ResponseEntity<Object> processCsv(MultipartFile file, ScrappingModel model, String prompt, Long category) throws IOException, CsvValidationException {
 
         try (Reader reader = new InputStreamReader(file.getInputStream());
              CSVReader csvReader = new CSVReader(reader)) {
@@ -36,6 +37,7 @@ public class PromptQueueService {
                 }
 
                 jobQueue.add(new ScrapifyJobs(
+                        model,
                         URLEncoder.encode(replaceVariables(prompt, recordMap), StandardCharsets.UTF_8),
                         category
                 ));
@@ -43,7 +45,7 @@ public class PromptQueueService {
         }
         return ResponseEntity.ok(new StatusResponse(
                 true,
-                "File Uploaded Successfully"
+                jobQueue.size() + " Prompts Generated Successfully"
         ));
     }
 

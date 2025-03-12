@@ -1,5 +1,6 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.controller;
 
+import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.PromptQueueService;
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.ScrapifyService;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
@@ -23,10 +24,11 @@ public class ScrapifyController {
     @PostMapping(value = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> uploadCsv(
             @RequestParam("file") MultipartFile file,
+            @RequestParam ScrappingModel model,
             @RequestParam String prompt,
             @RequestParam Long category
     ) throws Exception {
-        return promptQueueService.processCsv(file, prompt, category);
+        return promptQueueService.processCsv(file, model, prompt, category);
     }
 
     @GetMapping("/get-jobs")
@@ -37,11 +39,12 @@ public class ScrapifyController {
     @GetMapping("/get-content-data")
     public ResponseEntity<Object> getContentList(
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) ScrappingModel model,
             @RequestParam(required = false, defaultValue = "false") Boolean exportable,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size
     ) {
-        return scrapifyService.getContentListOrCSV(categoryId, exportable, page, size);
+        return scrapifyService.getContentListOrCSV(categoryId, model, exportable, page, size);
     }
 
 }
