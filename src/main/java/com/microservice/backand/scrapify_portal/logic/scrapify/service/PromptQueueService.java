@@ -2,8 +2,8 @@ package com.microservice.backand.scrapify_portal.logic.scrapify.service;
 
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 import com.microservice.backand.scrapify_portal.modelRequest.ScrapifyJobs;
-import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
+import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,11 @@ import java.io.Reader;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 @Service
 public class PromptQueueService {
