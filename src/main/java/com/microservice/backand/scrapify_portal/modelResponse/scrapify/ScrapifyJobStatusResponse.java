@@ -2,12 +2,10 @@ package com.microservice.backand.scrapify_portal.modelResponse.scrapify;
 
 import com.microservice.backand.scrapify_portal.modelRequest.ScrapifyJobs;
 
-import java.util.List;
-
 public class ScrapifyJobStatusResponse {
     public Boolean success;
     public String message;
-    public List<ScrapifyJobs> data;
+    public ScrapifyJobs data;
 
     public ScrapifyJobStatusResponse() {
     }
@@ -17,7 +15,7 @@ public class ScrapifyJobStatusResponse {
         this.message = message;
     }
 
-    public ScrapifyJobStatusResponse(Boolean success, String message, List<ScrapifyJobs> data) {
+    public ScrapifyJobStatusResponse(Boolean success, String message, ScrapifyJobs data) {
         this.success = success;
         this.message = message;
         this.data = data;
@@ -39,11 +37,11 @@ public class ScrapifyJobStatusResponse {
         this.message = message;
     }
 
-    public List<ScrapifyJobs> getData() {
+    public ScrapifyJobs getData() {
         return data;
     }
 
-    public void setData(List<ScrapifyJobs> data) {
+    public void setData(ScrapifyJobs data) {
         this.data = data;
     }
 

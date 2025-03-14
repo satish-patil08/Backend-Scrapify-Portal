@@ -13,10 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 @Service
 public class PromptQueueService {
@@ -59,13 +61,8 @@ public class PromptQueueService {
     }
 
     public ScrapifyJobStatusResponse getJob() {
-        List<ScrapifyJobs> jobs = new ArrayList<>();
-
-        while (!jobQueue.isEmpty()) {
-            jobs.add(jobQueue.poll());
-        }
-
-        if (jobs.isEmpty())
+        ScrapifyJobs job = jobQueue.poll();
+        if (job == null)
             return new ScrapifyJobStatusResponse(
                     false,
                     "The Job Queue is Empty"
@@ -73,7 +70,42 @@ public class PromptQueueService {
         return new ScrapifyJobStatusResponse(
                 true,
                 "Job Retrieved Successfully",
-                jobs
+                job
+        );
+    }
+
+    public StatusResponse getQueueList() {
+        if (jobQueue.isEmpty()) {
+            return new StatusResponse(
+                    false,
+                    "Job queue is empty."
+            );
+        }
+
+        List<ScrapifyJobs> decodedJobs = jobQueue.stream().peek(job -> {
+            String decodedPrompt = URLDecoder.decode(job.getFinalPrompt(), StandardCharsets.UTF_8);
+            job.setFinalPrompt(decodedPrompt);
+        }).toList();
+
+        return new StatusResponse(
+                true,
+                jobQueue.size() + " jobs pending in the queue.",
+                decodedJobs
+        );
+    }
+
+    public StatusResponse terminateScrapping() {
+        if (jobQueue.isEmpty())
+            return new StatusResponse(
+                    false,
+                    "No Job Queues Available to terminate"
+            );
+
+        long queueSize = jobQueue.size();
+        jobQueue.clear();
+        return new StatusResponse(
+                true,
+                queueSize + " Jobs terminated successfully."
         );
     }
 
