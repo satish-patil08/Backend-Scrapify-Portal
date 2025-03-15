@@ -22,7 +22,7 @@ public class ScrapifyController {
     @Autowired
     private ScrapifyService scrapifyService;
 
-    @PostMapping(value = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/initiate-scrapping", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> uploadCsv(
             @RequestParam("file") MultipartFile file,
             @RequestParam ScrappingModel model,

@@ -49,8 +49,7 @@ public class PromptQueueService {
         }
         return ResponseEntity.ok(new StatusResponse(
                 true,
-                jobQueue.size() + " Prompts Generated Successfully"
-        ));
+                "Scraping initiated successfully. " + jobQueue.size() + " prompts generated and queued for processing."));
     }
 
     private String replaceVariables(String template, Map<String, String> record) {

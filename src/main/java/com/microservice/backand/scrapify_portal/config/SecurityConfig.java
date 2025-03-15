@@ -27,7 +27,7 @@ public class SecurityConfig {
                                         "/users/login",
                                         "/users/register",
                                         "/users/reset-password",
-                                        "/scrapify/upload-csv"
+                                        "/scrapify/initiate-scrapping"
                                 ).permitAll() // Allow public access to auth endpoints
                                 .anyRequest().authenticated())// Secure all other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
