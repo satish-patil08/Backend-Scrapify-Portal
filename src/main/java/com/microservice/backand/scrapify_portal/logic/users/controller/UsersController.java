@@ -30,4 +30,8 @@ public class UsersController {
         return userLoginService.loginUser(loginVerificationRequest);
     }
 
+    @PutMapping("/reset-password")
+    public StatusResponse resetPassword(@RequestBody LoginVerificationRequest loginVerificationRequest) {
+        return userCRUDOps.resetPassword(loginVerificationRequest);
+    }
 }

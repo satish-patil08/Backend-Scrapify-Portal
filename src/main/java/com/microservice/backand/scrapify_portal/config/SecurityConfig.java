@@ -26,6 +26,7 @@ public class SecurityConfig {
                         auth.requestMatchers(
                                         "/users/login",
                                         "/users/register",
+                                        "/users/reset-password",
                                         "/scrapify/upload-csv"
                                 ).permitAll() // Allow public access to auth endpoints
                                 .anyRequest().authenticated())// Secure all other endpoints
