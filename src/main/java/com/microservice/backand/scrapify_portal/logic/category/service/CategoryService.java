@@ -24,10 +24,6 @@ public class CategoryService {
     public StatusResponse save(Category category) {
         Optional<Category> byName = categoryRepository.existByName(category.getName());
 
-        if (category.getId() == null) {
-            category.setId(sequenceGeneratorService.getSequenceNumber(Category.CATEGORY_SEQUENCE));
-        }
-
         if (byName.isPresent())
             return new StatusResponse(
                     false,
@@ -39,6 +35,10 @@ public class CategoryService {
                     false,
                     "Category Name Can't be Empty"
             );
+
+        if (category.getId() == null) {
+            category.setId(sequenceGeneratorService.getSequenceNumber(Category.CATEGORY_SEQUENCE));
+        }
 
         return new StatusResponse(
                 true,
