@@ -1,19 +1,31 @@
-package com.microservice.backand.scrapify_portal.modelRequest;
+package com.microservice.backand.scrapify_portal.modelRequest.scrapify;
 
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 
 public class ScrapifyJobs {
+    public Long id;
     public ScrappingModel model;
     public String finalPrompt;
     public Long category;
+    public JobStatus status;
 
     public ScrapifyJobs() {
     }
 
-    public ScrapifyJobs(ScrappingModel model, String finalPrompt, Long category) {
+    public ScrapifyJobs(Long id, ScrappingModel model, String finalPrompt, Long category, JobStatus status) {
+        this.id = id;
         this.model = model;
         this.finalPrompt = finalPrompt;
         this.category = category;
+        this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public ScrappingModel getModel() {
@@ -40,12 +52,22 @@ public class ScrapifyJobs {
         this.category = category;
     }
 
+    public JobStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(JobStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "ScrapifyJobs{" +
-                "model=" + model +
+                "id=" + id +
+                ", model=" + model +
                 ", finalPrompt='" + finalPrompt + '\'' +
                 ", category=" + category +
+                ", status=" + status +
                 '}';
     }
 }

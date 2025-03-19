@@ -5,6 +5,7 @@ import com.microservice.backand.scrapify_portal.logic.scrapify.service.PromptQue
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.ScrapifyService;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
+import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobsListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,13 +39,18 @@ public class ScrapifyController {
     }
 
     @GetMapping("/get-queue-list")
-    public StatusResponse getQueueList() {
+    public ScrapifyJobsListResponse getQueueList() {
         return promptQueueService.getQueueList();
     }
 
     @GetMapping("/terminate-scrapping")
     public StatusResponse terminateScrapping() {
         return promptQueueService.terminateScrapping();
+    }
+
+    @PutMapping("/terminate/job-by-id")
+    public StatusResponse terminateJobById(@RequestParam Long jobId) {
+        return promptQueueService.terminateJobById(jobId);
     }
 
     @GetMapping("/get-content-data")

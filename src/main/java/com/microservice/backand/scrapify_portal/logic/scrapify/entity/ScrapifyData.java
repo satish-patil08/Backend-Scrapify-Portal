@@ -1,6 +1,6 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.entity;
 
-import com.microservice.backand.scrapify_portal.modelRequest.ChatGPTResponseDTO;
+import com.microservice.backand.scrapify_portal.modelRequest.scrapify.ChatGPTResponseDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;

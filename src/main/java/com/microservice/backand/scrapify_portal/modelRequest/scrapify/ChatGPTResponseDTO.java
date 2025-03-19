@@ -1,4 +1,4 @@
-package com.microservice.backand.scrapify_portal.modelRequest;
+package com.microservice.backand.scrapify_portal.modelRequest.scrapify;
 
 import java.util.ArrayList;
 

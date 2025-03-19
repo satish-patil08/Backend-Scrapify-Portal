@@ -3,7 +3,7 @@ package com.microservice.backand.scrapify_portal.logic.scrapify.service;
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrapifyData;
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 import com.microservice.backand.scrapify_portal.logic.scrapify.repository.ScrapifyRepository;
-import com.microservice.backand.scrapify_portal.modelRequest.ChatGPTResponseDTO;
+import com.microservice.backand.scrapify_portal.modelRequest.scrapify.ChatGPTResponseDTO;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyContentListResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyDataMongoResponse;
 import com.opencsv.CSVWriter;
