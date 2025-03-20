@@ -174,7 +174,6 @@ public class PromptQueueService {
     }
 
     public StatusResponse terminateScrapping() {
-        jobsListQueue.clear();
         if (jobQueue.isEmpty()) {
             return new StatusResponse(
                     false,
