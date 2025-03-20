@@ -1,4 +1,4 @@
-package com.microservice.backand.scrapify_portal.modelRequest.scrapify;
+package com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs;
 
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 

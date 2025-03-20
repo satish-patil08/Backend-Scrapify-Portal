@@ -3,6 +3,8 @@ package com.microservice.backand.scrapify_portal.logic.scrapify.controller;
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.PromptQueueService;
 import com.microservice.backand.scrapify_portal.logic.scrapify.service.ScrapifyService;
+import com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs.JobStatus;
+import com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs.ScrapifyJobs;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobsListResponse;
@@ -51,6 +53,16 @@ public class ScrapifyController {
     @PutMapping("/terminate/job-by-id")
     public StatusResponse terminateJobById(@RequestParam Long jobId) {
         return promptQueueService.terminateJobById(jobId);
+    }
+
+    @PutMapping("/update-job-status")
+    public StatusResponse addFailedJob(@RequestBody ScrapifyJobs job, @RequestParam JobStatus status) {
+        return promptQueueService.updateJobStatus(job, status);
+    }
+
+    @GetMapping("/clear-history")
+    public StatusResponse clearHistory() {
+        return promptQueueService.clearHistory();
     }
 
     @GetMapping("/get-content-data")

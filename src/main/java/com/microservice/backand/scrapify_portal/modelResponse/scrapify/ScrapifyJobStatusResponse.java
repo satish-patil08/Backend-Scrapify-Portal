@@ -1,6 +1,6 @@
 package com.microservice.backand.scrapify_portal.modelResponse.scrapify;
 
-import com.microservice.backand.scrapify_portal.modelRequest.scrapify.ScrapifyJobs;
+import com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs.ScrapifyJobs;
 
 public class ScrapifyJobStatusResponse {
     public Boolean success;

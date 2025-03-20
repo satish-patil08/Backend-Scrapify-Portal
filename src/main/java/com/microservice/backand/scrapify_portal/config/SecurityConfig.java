@@ -34,7 +34,8 @@ public class SecurityConfig {
                                         "/users/register",
                                         "/users/reset-password",
                                         "/scrapify/initiate-scrapping",
-                                        "/scrapify/get-jobs"
+                                        "/scrapify/get-jobs",
+                                        "/scrapify/update-job-status"
                                 ).permitAll() // Allow public access to auth endpoints
                                 .anyRequest().authenticated())// Secure all other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

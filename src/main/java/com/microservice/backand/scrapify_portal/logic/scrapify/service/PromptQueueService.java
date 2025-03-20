@@ -1,8 +1,8 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.service;
 
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
-import com.microservice.backand.scrapify_portal.modelRequest.scrapify.JobStatus;
-import com.microservice.backand.scrapify_portal.modelRequest.scrapify.ScrapifyJobs;
+import com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs.JobStatus;
+import com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs.ScrapifyJobs;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobsListResponse;
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PromptQueueService {
 
     private final Queue<ScrapifyJobs> jobQueue = new ConcurrentLinkedQueue<>();
-    private final Queue<ScrapifyJobs> runningQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<ScrapifyJobs> jobsListQueue = new ConcurrentLinkedQueue<>();
     private final AtomicLong jobIdGenerator = new AtomicLong(1);
 
     public ResponseEntity<Object> processCsv(MultipartFile file, ScrappingModel model, String prompt, Long category) throws IOException, CsvValidationException {
@@ -72,8 +72,8 @@ public class PromptQueueService {
                     false,
                     "The Job Queue is Empty"
             );
-        runningQueue.clear();
-        runningQueue.add(new ScrapifyJobs(
+
+        jobsListQueue.add(new ScrapifyJobs(
                 job.getId(),
                 job.getModel(),
                 job.getFinalPrompt(),
@@ -87,6 +87,33 @@ public class PromptQueueService {
         );
     }
 
+    public StatusResponse updateJobStatus(ScrapifyJobs job, JobStatus status) {
+        if (job == null) {
+            return new StatusResponse(
+                    false,
+                    "Job is Empty"
+            );
+        }
+
+        // Remove the job if it already exists in the failedJobs queue
+        jobsListQueue.removeIf(j -> j.getId().equals(job.getId()));
+
+        // Add the job with FAILED status
+        jobsListQueue.add(new ScrapifyJobs(
+                job.getId(),
+                job.getModel(),
+                job.getFinalPrompt(),
+                job.getCategory(),
+                status
+        ));
+
+        return new StatusResponse(
+                true,
+                "Job Status Updated."
+        );
+
+    }
+
     public ScrapifyJobsListResponse getQueueList() {
         if (jobQueue.isEmpty()) {
             return new ScrapifyJobsListResponse(
@@ -95,7 +122,7 @@ public class PromptQueueService {
             );
         }
 
-        List<ScrapifyJobs> runningJobs = runningQueue.stream()
+        List<ScrapifyJobs> runningJobs = jobsListQueue.stream()
                 .map(job -> new ScrapifyJobs(
                         job.getId(),
                         job.getModel(),
@@ -119,6 +146,9 @@ public class PromptQueueService {
         allJobs.addAll(runningJobs);
         allJobs.addAll(queuedJobs);
 
+        // Sort List by ASC order
+        allJobs.sort(Comparator.comparing(ScrapifyJobs::getId));
+
         long totalCount = jobQueue.size();
         return new ScrapifyJobsListResponse(
                 true,
@@ -128,16 +158,32 @@ public class PromptQueueService {
         );
     }
 
+    public StatusResponse clearHistory() {
+        if (jobsListQueue.isEmpty()) {
+            return new StatusResponse(
+                    false,
+                    "No History available"
+            );
+        }
+
+        jobsListQueue.clear();
+        return new StatusResponse(
+                true,
+                "History Cleared Successfully"
+        );
+    }
+
     public StatusResponse terminateScrapping() {
-        if (jobQueue.isEmpty())
+        jobsListQueue.clear();
+        if (jobQueue.isEmpty()) {
             return new StatusResponse(
                     false,
                     "No Job Queues Available to terminate"
             );
+        }
 
         long queueSize = jobQueue.size();
         jobQueue.clear();
-        runningQueue.clear();
         return new StatusResponse(
                 true,
                 queueSize + " Jobs terminated successfully."
