@@ -8,6 +8,12 @@ public class ScrapifyJobsListResponse {
     public Boolean success;
     public String message;
     public Long totalCount;
+    public Long runningCount;
+    public Long successCount;
+    public Long queuedCount;
+    public Long failedCount;
+    public Long terminatedCount;
+    public Long retryingCount;
     public List<ScrapifyJobs> data;
 
     public ScrapifyJobsListResponse() {
@@ -18,10 +24,16 @@ public class ScrapifyJobsListResponse {
         this.message = message;
     }
 
-    public ScrapifyJobsListResponse(Boolean success, String message, Long totalCount, List<ScrapifyJobs> data) {
+    public ScrapifyJobsListResponse(Boolean success, String message, Long totalCount, Long runningCount, Long successCount, Long queuedCount, Long failedCount, Long terminatedCount, Long retryingCount, List<ScrapifyJobs> data) {
         this.success = success;
         this.message = message;
         this.totalCount = totalCount;
+        this.runningCount = runningCount;
+        this.successCount = successCount;
+        this.queuedCount = queuedCount;
+        this.failedCount = failedCount;
+        this.terminatedCount = terminatedCount;
+        this.retryingCount = retryingCount;
         this.data = data;
     }
 

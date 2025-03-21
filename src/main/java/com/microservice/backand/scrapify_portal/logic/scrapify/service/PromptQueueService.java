@@ -42,13 +42,16 @@ public class PromptQueueService {
                     recordMap.put(headers[i].strip(), row[i].strip());
                 }
 
-                jobQueue.add(new ScrapifyJobs(
+                ScrapifyJobs jobs = new ScrapifyJobs(
                         jobIdGenerator.getAndIncrement(),
                         model,
                         URLEncoder.encode(replaceVariables(prompt, recordMap), StandardCharsets.UTF_8),
                         category,
                         JobStatus.QUEUED
-                ));
+                );
+
+                jobQueue.add(jobs);
+                jobsListQueue.add(jobs);
             }
         }
         return ResponseEntity.ok(new StatusResponse(
@@ -72,6 +75,8 @@ public class PromptQueueService {
                     false,
                     "The Job Queue is Empty"
             );
+
+        jobsListQueue.removeIf(j -> j.getId().equals(job.getId()));
 
         jobsListQueue.add(new ScrapifyJobs(
                 job.getId(),
@@ -115,7 +120,7 @@ public class PromptQueueService {
     }
 
     public ScrapifyJobsListResponse getQueueList() {
-        if (jobQueue.isEmpty()) {
+        if (jobsListQueue.isEmpty()) {
             return new ScrapifyJobsListResponse(
                     false,
                     "Job queue is empty."
@@ -132,28 +137,30 @@ public class PromptQueueService {
                 ))
                 .toList();
 
-        List<ScrapifyJobs> queuedJobs = jobQueue.stream()
-                .map(job -> new ScrapifyJobs(
-                        job.getId(),
-                        job.getModel(),
-                        URLDecoder.decode(job.getFinalPrompt(), StandardCharsets.UTF_8),
-                        job.getCategory(),
-                        job.getStatus()
-                ))
-                .toList();
+        List<ScrapifyJobs> allJobs = new ArrayList<>(runningJobs);
 
-        List<ScrapifyJobs> allJobs = new ArrayList<>();
-        allJobs.addAll(runningJobs);
-        allJobs.addAll(queuedJobs);
+        // Count jobs based on their statuses
+        long runningCount = allJobs.stream().filter(job -> job.getStatus() == JobStatus.RUNNING).count();
+        long successCount = allJobs.stream().filter(job -> job.getStatus() == JobStatus.SUCCESS).count();
+        long queuedCount = allJobs.stream().filter(job -> job.getStatus() == JobStatus.QUEUED).count();
+        long failedCount = allJobs.stream().filter(job -> job.getStatus() == JobStatus.FAILED).count();
+        long terminatedCount = allJobs.stream().filter(job -> job.getStatus() == JobStatus.TERMINATED).count();
+        long retryingCount = allJobs.stream().filter(job -> job.getStatus() == JobStatus.RETRYING).count();
 
         // Sort List by ASC order
         allJobs.sort(Comparator.comparing(ScrapifyJobs::getId));
 
-        long totalCount = jobQueue.size();
+        long totalCount = allJobs.size();
         return new ScrapifyJobsListResponse(
                 true,
                 totalCount + " jobs pending in the queue.",
                 totalCount,
+                runningCount,
+                successCount,
+                queuedCount,
+                failedCount,
+                terminatedCount,
+                retryingCount,
                 allJobs
         );
     }
@@ -182,7 +189,11 @@ public class PromptQueueService {
         }
 
         long queueSize = jobQueue.size();
-        jobQueue.clear();
+        while (!jobQueue.isEmpty()) {
+            ScrapifyJobs job = jobQueue.poll();
+            updateJobStatus(job, JobStatus.TERMINATED);
+        }
+
         return new StatusResponse(
                 true,
                 queueSize + " Jobs terminated successfully."
