@@ -201,36 +201,30 @@ public class PromptQueueService {
     }
 
     public StatusResponse terminateJobById(Long jobId) {
-        if (!jobQueue.isEmpty()) {
-            for (ScrapifyJobs job : jobQueue) {
-                if (job.getId().equals(jobId)) {
-                    job.setStatus(JobStatus.TERMINATED);
-                    return new StatusResponse(
-                            true,
-                            "Job terminated successfully.",
-                            job
-                    );
-                }
-            }
+        if (jobQueue.isEmpty()) return new StatusResponse(
+                false,
+                "Job Queue is Empty"
+        );
 
-            // TODO Handle running job termination (scraper and portal service)
-            // Check runningQueue for the job
-            /*for (ScrapifyJobs job : runningQueue) {
-                if (job.getId().equals(jobId)) {
-                    job.setStatus(JobStatus.TERMINATED);
-                    runningQueue.remove(job); // Remove from running queue
+        for (ScrapifyJobs job : jobQueue) {
+            if (job.getId().equals(jobId)) {
+                if (job.getStatus() == JobStatus.RUNNING) {
                     return new StatusResponse(
-                            true,
-                            "Running job terminated successfully.",
-                            job
+                            false,
+                            "Running Job Cannot Be Terminated"
                     );
                 }
-            }*/
-            return new StatusResponse(false, "Job ID not found.");
+                job.setStatus(JobStatus.TERMINATED);
+                updateJobStatus(job, JobStatus.TERMINATED);
+                return new StatusResponse(
+                        true,
+                        "Job terminated successfully."
+                );
+            }
         }
         return new StatusResponse(
                 false,
-                "Job Queue Is Empty"
+                "Job not found in the queue."
         );
     }
 

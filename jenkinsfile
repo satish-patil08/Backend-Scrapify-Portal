@@ -21,7 +21,7 @@ pipeline {
                 sudo cp -r target/*.jar /var/lib/jenkins/backend/backend-scrapify-portal/
 
                 # Change ownership of the files to the appropriate user
-                sudo chown -R azureuser:azureuser /var/lib/jenkins/backend/backend-scrapify-portal/
+                sudo chown -R ubunut:ubuntu /var/lib/jenkins/backend/backend-scrapify-portal/
 
                 # Rename the JAR file to app.jar for consistency
                 sudo mv /var/lib/jenkins/backend/backend-scrapify-portal/*.jar /var/lib/jenkins/backend/backend-scrapify-portal/app.jar
