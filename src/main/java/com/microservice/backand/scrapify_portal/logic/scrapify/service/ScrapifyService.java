@@ -3,7 +3,6 @@ package com.microservice.backand.scrapify_portal.logic.scrapify.service;
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrapifyData;
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 import com.microservice.backand.scrapify_portal.logic.scrapify.repository.ScrapifyRepository;
-import com.microservice.backand.scrapify_portal.modelRequest.scrapify.ChatGPTResponseDTO;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyContentListResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyDataMongoResponse;
 import com.opencsv.CSVWriter;
@@ -14,13 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +34,8 @@ public class ScrapifyService {
             ));
 
         if (exportable) {
-            return generateCsv(mongoResponse.getData());
+            ScrapifyDataMongoResponse response = scrapifyRepository.getContentWithPagination(categoryId, model, null, null);
+            return generateCsv(response.getData());
         } else {
             return ResponseEntity.ok(new ScrapifyContentListResponse(
                     true,
@@ -55,67 +52,53 @@ public class ScrapifyService {
              OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
              CSVWriter csvWriter = new CSVWriter(writer)) {
 
-            // Get CSV headers dynamically form ChatGPTResponseDTO
-            String[] headers = Arrays.stream(ChatGPTResponseDTO.class.getDeclaredFields())
-                    .map(Field::getName)
-                    .toArray(String[]::new);
+            // Dynamically extract headers from the first valid jsonData map
+            Set<String> headerSet = extractHeaders(scrapifyData);
+            String[] headers = headerSet.toArray(new String[0]);
             csvWriter.writeNext(headers);
 
-            // Write CSV rows (from jsonData)
+            // Write rows
             for (ScrapifyData data : scrapifyData) {
-                ChatGPTResponseDTO jsonData = data.getJsonData();
-                if (jsonData != null) {
-                    csvWriter.writeNext(extractFieldValues(jsonData));
+                if (data.getJsonData() != null) {
+                    csvWriter.writeNext(extractRow(data.getJsonData(), headers));
                 }
             }
 
             csvWriter.flush();
             byte[] csvBytes = outputStream.toByteArray();
 
-            // Set headers
             HttpHeaders httpHeaders = new HttpHeaders();
             String fileName = "scrapify_data_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".csv";
             httpHeaders.add(HttpHeaders.CONTENT_TYPE, "text/csv");
             httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
 
-            return ResponseEntity.ok()
-                    .headers(httpHeaders)
-                    .body(csvBytes);
+            return ResponseEntity.ok().headers(httpHeaders).body(csvBytes);
 
         } catch (Exception e) {
             throw new RuntimeException("Error generating CSV: " + e.getMessage(), e);
         }
     }
 
-    private String[] extractFieldValues(ChatGPTResponseDTO jsonData) {
-        Field[] fields = jsonData.getClass().getDeclaredFields();
-        List<String> values = new ArrayList<>();
-        try {
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object value = field.get(jsonData);
-
-                // Handle null values gracefully
-                if (value == null) {
-                    values.add("");
-                    continue;
-                }
-
-                // Handle list/array fields dynamically
-                if (value instanceof List<?> list) {
-                    values.add(list.stream()
-                            .map(Object::toString)
-                            .collect(Collectors.joining(",")));
-                } else if (value.getClass().isArray()) {
-                    values.add(Arrays.stream((Object[]) value)
-                            .map(Object::toString)
-                            .collect(Collectors.joining(",")));
-                } else {
-                    values.add(value.toString());
-                }
+    private Set<String> extractHeaders(List<ScrapifyData> scrapifyData) {
+        for (ScrapifyData data : scrapifyData) {
+            if (data.getJsonData() != null && !data.getJsonData().isEmpty()) {
+                return new LinkedHashSet<>(data.getJsonData().keySet());
             }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Error extracting field values: " + e.getMessage(), e);
+        }
+        return new LinkedHashSet<>();
+    }
+
+    private String[] extractRow(HashMap<String, Object> jsonData, String[] headers) {
+        List<String> values = new ArrayList<>();
+        for (String header : headers) {
+            Object value = jsonData.getOrDefault(header, "");
+            if (value instanceof List<?> list) {
+                values.add(list.stream().map(Object::toString).collect(Collectors.joining(",")));
+            } else if (value instanceof Object[] array) {
+                values.add(Arrays.stream(array).map(Object::toString).collect(Collectors.joining(",")));
+            } else {
+                values.add(value != null ? value.toString() : "");
+            }
         }
         return values.toArray(new String[0]);
     }

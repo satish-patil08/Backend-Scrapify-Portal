@@ -1,10 +1,10 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.controller;
 
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
-import com.microservice.backand.scrapify_portal.logic.scrapify.service.PromptQueueService;
-import com.microservice.backand.scrapify_portal.logic.scrapify.service.ScrapifyService;
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs.JobStatus;
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs.ScrapifyJobs;
+import com.microservice.backand.scrapify_portal.logic.scrapify.service.PromptQueueService;
+import com.microservice.backand.scrapify_portal.logic.scrapify.service.ScrapifyService;
 import com.microservice.backand.scrapify_portal.modelResponse.StatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobStatusResponse;
 import com.microservice.backand.scrapify_portal.modelResponse.scrapify.ScrapifyJobsListResponse;
@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.LinkedList;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -30,9 +32,10 @@ public class ScrapifyController {
             @RequestParam("file") MultipartFile file,
             @RequestParam ScrappingModel model,
             @RequestParam String prompt,
-            @RequestParam Long category
+            @RequestParam Long category,
+            @RequestParam LinkedList<String> fields
     ) throws Exception {
-        return promptQueueService.processCsv(file, model, prompt, category);
+        return promptQueueService.processCsv(file, model, prompt, category, fields);
     }
 
     @GetMapping("/get-jobs")
@@ -67,7 +70,7 @@ public class ScrapifyController {
 
     @GetMapping("/get-content-data")
     public ResponseEntity<Object> getContentList(
-            @RequestParam(required = false) Long categoryId,
+            @RequestParam Long categoryId,
             @RequestParam(required = false) ScrappingModel model,
             @RequestParam(required = false, defaultValue = "false") Boolean exportable,
             @RequestParam(required = false) Integer page,

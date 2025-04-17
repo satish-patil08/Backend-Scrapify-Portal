@@ -2,22 +2,26 @@ package com.microservice.backand.scrapify_portal.logic.scrapify.entity.jobs;
 
 import com.microservice.backand.scrapify_portal.logic.scrapify.entity.ScrappingModel;
 
+import java.util.LinkedList;
+
 public class ScrapifyJobs {
     public Long id;
     public ScrappingModel model;
     public String finalPrompt;
     public Long category;
     public JobStatus status;
+    public LinkedList<String> fields;
 
     public ScrapifyJobs() {
     }
 
-    public ScrapifyJobs(Long id, ScrappingModel model, String finalPrompt, Long category, JobStatus status) {
+    public ScrapifyJobs(Long id, ScrappingModel model, String finalPrompt, Long category, JobStatus status, LinkedList<String> fields) {
         this.id = id;
         this.model = model;
         this.finalPrompt = finalPrompt;
         this.category = category;
         this.status = status;
+        this.fields = fields;
     }
 
     public Long getId() {
@@ -60,6 +64,14 @@ public class ScrapifyJobs {
         this.status = status;
     }
 
+    public LinkedList<String> getFields() {
+        return fields;
+    }
+
+    public void setFields(LinkedList<String> fields) {
+        this.fields = fields;
+    }
+
     @Override
     public String toString() {
         return "ScrapifyJobs{" +
@@ -68,6 +80,7 @@ public class ScrapifyJobs {
                 ", finalPrompt='" + finalPrompt + '\'' +
                 ", category=" + category +
                 ", status=" + status +
+                ", fields=" + fields +
                 '}';
     }
 }

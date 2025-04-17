@@ -29,7 +29,7 @@ public class PromptQueueService {
     private final Queue<ScrapifyJobs> jobsListQueue = new ConcurrentLinkedQueue<>();
     private final AtomicLong jobIdGenerator = new AtomicLong(1);
 
-    public ResponseEntity<Object> processCsv(MultipartFile file, ScrappingModel model, String prompt, Long category) throws IOException, CsvValidationException {
+    public ResponseEntity<Object> processCsv(MultipartFile file, ScrappingModel model, String prompt, Long category, LinkedList<String> fields) throws IOException, CsvValidationException {
 
         try (Reader reader = new InputStreamReader(file.getInputStream());
              CSVReader csvReader = new CSVReader(reader)) {
@@ -47,7 +47,8 @@ public class PromptQueueService {
                         model,
                         URLEncoder.encode(replaceVariables(prompt, recordMap), StandardCharsets.UTF_8),
                         category,
-                        JobStatus.QUEUED
+                        JobStatus.QUEUED,
+                        fields
                 );
 
                 jobQueue.add(jobs);
@@ -83,7 +84,8 @@ public class PromptQueueService {
                 job.getModel(),
                 job.getFinalPrompt(),
                 job.getCategory(),
-                JobStatus.RUNNING
+                JobStatus.RUNNING,
+                job.getFields()
         ));
         return new ScrapifyJobStatusResponse(
                 true,
@@ -103,13 +105,13 @@ public class PromptQueueService {
         // Remove the job if it already exists in the failedJobs queue
         jobsListQueue.removeIf(j -> j.getId().equals(job.getId()));
 
-        // Add the job with FAILED status
         jobsListQueue.add(new ScrapifyJobs(
                 job.getId(),
                 job.getModel(),
                 job.getFinalPrompt(),
                 job.getCategory(),
-                status
+                status,
+                job.getFields()
         ));
 
         return new StatusResponse(
@@ -133,7 +135,8 @@ public class PromptQueueService {
                         job.getModel(),
                         URLDecoder.decode(job.getFinalPrompt(), StandardCharsets.UTF_8),
                         job.getCategory(),
-                        job.getStatus()
+                        job.getStatus(),
+                        job.getFields()
                 ))
                 .toList();
 
@@ -153,7 +156,7 @@ public class PromptQueueService {
         long totalCount = allJobs.size();
         return new ScrapifyJobsListResponse(
                 true,
-                totalCount + " jobs pending in the queue.",
+                "Job list retrieved successfully",
                 totalCount,
                 runningCount,
                 successCount,

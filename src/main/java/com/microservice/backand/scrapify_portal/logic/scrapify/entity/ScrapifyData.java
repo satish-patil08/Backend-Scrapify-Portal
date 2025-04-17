@@ -1,9 +1,10 @@
 package com.microservice.backand.scrapify_portal.logic.scrapify.entity;
 
-import com.microservice.backand.scrapify_portal.modelRequest.scrapify.ChatGPTResponseDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.HashMap;
 
 @Document(collection = "scrapped_data")
 public class ScrapifyData {
@@ -16,12 +17,12 @@ public class ScrapifyData {
     public ScrappingModel model;
     public String content; // Raw JSON response from ChatGPT
     public Long categoryId;
-    public ChatGPTResponseDTO jsonData; // Custom model to store structured data
+    public HashMap<String, Object> jsonData;
 
     public ScrapifyData() {
     }
 
-    public ScrapifyData(Long id, ScrappingModel model, String content, Long categoryId, ChatGPTResponseDTO jsonData) {
+    public ScrapifyData(Long id, ScrappingModel model, String content, Long categoryId, HashMap<String, Object> jsonData) {
         this.id = id;
         this.model = model;
         this.content = content;
@@ -61,11 +62,11 @@ public class ScrapifyData {
         this.categoryId = categoryId;
     }
 
-    public ChatGPTResponseDTO getJsonData() {
+    public HashMap<String, Object> getJsonData() {
         return jsonData;
     }
 
-    public void setJsonData(ChatGPTResponseDTO jsonData) {
+    public void setJsonData(HashMap<String, Object> jsonData) {
         this.jsonData = jsonData;
     }
 
